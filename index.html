@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+  <body>
+    <h2>Escucha las Radios Libres y Descentralizadas</h2>
+    <h3>(BitTorrent over WebRTC)</h3>
+    Introduce un fichero para compartir:</br> 
+    <input type="file" id="files" name="files[]" />
+    <output id="list"></output>
+ 
+   </hr></br>
+  
+   <form id="form"/> 
+      <label for="torrentId">Pega tu enlace Magnet para escuchar, ver y/o descargar:</label> 
+      <input name="torrentId", placeholder="magnet:" value="magnet:?xt=urn:btih:3fd055998c9bb7443c60dcb2602d35f3b86ae79f&dn=LDD+-+20+-+El+cerebro.ogg&tr=udp%3A%2F%2Fexodus.desync.com%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com">
+      <button type="submit">Escucha Ya!</button>
+  </form>
+<p>
+Una peli de ejemplo: 
+</br>
+magnet:?xt=urn:btih:6a9759bffd5c0af65319979fb7832189f4f3c35d&dn=sintel.mp4&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&ws=https%3A%2F%2Fwebtorrent.io%2Ftorrents%2Fsintel-1024-surround.mp4
+</p>
+
+    </hr>
+    <h3>Debug Log :</h3>
+    <div class="log"></div>
+    <!-- Include the latest version of WebTorrent -->
+    <script src="webtorrent.min.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
+
+<!--
+    <script>
+var dragDrop = require('drag-drop')
+var thunky = require('thunky')
+var WebTorrent = require('webtorrent')
+// var client = new WebTorrent()
+
+var util = require('./util')
+
+var getClient = thunky(function (cb) {
+  getRtcConfig(function (err, rtcConfig) {
+    if (err) util.error(err)
+    var client = new WebTorrent({
+      tracker: {
+        rtcConfig: rtcConfig
+      }
+    })
+    window.client = client // for easier debugging
+    client.on('warning', util.warning)
+    client.on('error', util.error)
+    cb(null, client)
+  })
+})
+
+function start_seeding (files) {
+	if (files.length === 0) return
+	log('Seeding ' + files.length + ' files')
+	if (window.File && window.FileReader && window.FileList && window.Blob) {
+        	// Seed from WebTorrent
+		getClient(function (err, client) {
+			if (err) return util.error(err)
+			client.seed(files, onTorrent)
+			})
+	} else {
+        	alert('The File APIs are not fully supported in this browser.');
+        	log('The File APIs are not fully supported in this browser.');
+       	}
+	// files is a FileList of File objects. List some properties.
+	var output = [];
+	for (var i = 0, f; f = files[i]; i++) {
+        	output.push('<li><strong>',escape(f.name),'</strong> -- '
+                            ,f.type,'</li>');   
+//                            ,'--',f.size,' bytes -- last modified: ' 
+//                            ,'f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a', '</li>' );
+	        document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+      	} // End for
+        // Sleep
+        // hacer nuevo nombre de file
+        // start_seed(new_file);
+}
+
+// botón seleccion de ficheros 
+function handleFileSelect(evt) {
+	console.log('File event');
+        var file = evt.target.files; // FileList object
+        start_seeding(file)
+}
+
+document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+function onTorrent (torrent) {
+        log('Got torrent metadata!')
+        log(
+          'Torrent info hash: ' + torrent.infoHash + ' ' +
+          '<a href="' + torrent.magnetURI + '" target="_blank">[Magnet URI]</a> ' +
+          '<a href="' + torrent.torrentFileBlobURL + '" target="_blank" download="' + torrent.name + '.torrent">[Download .torrent]</a>'
+        )
+
+        // Print out progress every 5 seconds
+        var interval = setInterval(function () {
+          log('Progress: ' + (torrent.progress * 100).toFixed(1) + '%')
+        }, 5000)
+
+        torrent.on('done', function () {
+          log('Progress: 100%')
+          clearInterval(interval)
+        })
+
+        // Render all files into to the page
+        torrent.files.forEach(function (file) {
+          file.appendTo('.log')
+          log('(Blob URLs only work if the file is loaded from a server. "http//localhost" works. "file://" does not.)')
+          file.getBlobURL(function (err, url) {
+            if (err) return log(err.message)
+            log('File done.')
+            log('<a href="' + url + '">Download full file: ' + file.name + '</a>')
+          })
+        })
+      }
+
+function log (str) {
+        var p = document.createElement('p');
+        p.innerHTML = str;
+        document.querySelector('.log').appendChild(p);
+}
+
+
+      document.querySelector('form').addEventListener('submit', function (e) {
+        e.preventDefault() // Prevent page refresh
+
+       // Launch Seed
+       // Check for the various File API support.
+  
+
+       //////////
+       // var torrentId = document.querySelector('form input[name=torrentId]').value
+       // var torrentId = 'magnet:?xt=urn:btih:5caa562234a989b703551323ec39ed0d64f3ab30&dn=radioela%5Fstream%5F00m%5F00s%5F%5F01m%5F00s.mp3&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80' 
+       // var torrentId = "magnet:?xt=urn:btih:5caa562234a989b703551323ec39ed0d64f3ab30&dn=radioela%5Fstream%5F00m%5F00s%5F%5F01m%5F00s.mp3&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=udp%3A%2F%2Fopen.demonii.com%3A1337&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969"
+       log('Adding ' + torrentId)
+       client.add(torrentId, onTorrent)
+      })
+
+
+    </script>
+-->
