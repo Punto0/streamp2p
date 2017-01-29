@@ -7,29 +7,32 @@
 </head
 <body>
     <center> 
-    Screen : 
+    <h4>Screen</h4> 
     <div class="screen"></div> 
-    </center>  
 <hr>  
-   File info:
+   <h4>File info</h4>
    <div class="play"></div>
 <hr>
+    <h3>Sube un archivo torrent de tu ordenador</h3>
+    <input type="file" id="play_torrent_files" name="files[]" />
+    <output id="torrent_list"></output>
+<hr>
    <form id="magnet_form"/> 
-       Pega un enlace Magnet
+      <h3> Pega un enlace Magnet</h3>	
       <input name="torrentId", placeholder="magnet:" value="">
       <button type="submit">Escucha</button>
 <br>
      <ul>
       <li>
-      ELA - 100Fuegos - 23 - Carrero - mp3 - 187 MB - 1:18:03
+      ELA - 100Fuegos - 23 - Carrero - mp4 - 1:18:03
 <br><br>
-magnet:?xt=urn:btih:21d12614b8ed2718a1f1f1bc50b53ec1bc83d8b4&dn=radioela_100fuegos_23_carrero.mp3&tr=http%3A%2F%2Fstreamp2p.punto0.org%3A6969%2Fannounce&tr=http%3A%2F%2Fstreamp2p.punto0.org%3A8000%2Fannounce&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=ws%3A%2F%2Fstreamp2p.punto0.org%3A8000&tr=ws%3A%2F%2Ftracker.btorrent.xyz
+magnet:?xt=urn:btih:7b40c74c9ad973260a1dd9ff2e1d87c922bd629a&dn=radioela_100fuegos_23_carrero.mp4&tr=ws%3A%2F%2Fstreamp2p.punto0.org%3A8000
 <br><br>
      </li>
       <li>
-      Irola - La linterna de Diogenes - 20 - El Cerebro - Ogg - 51MB - 1:22:54 
+      Irola - La linterna de Diogenes - 20 - El Cerebro - mp4 - 1:22:54 
 <br><br>
-magnet:?xt=urn:btih:3fd055998c9bb7443c60dcb2602d35f3b86ae79f&dn=LDD+-+20+-+El+cerebro.ogg&tr=http%3A%2F%2Fstreamp2p.punto0.org%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=ws%3A%2F%2Fstreamp2p.punto0.org%3A8000&tr=ws%3A%2F%2Ftracker.btorrent.xyz
+magnet:?xt=urn:btih:13bc77cabfce742f6fc240ec42aea1f70b006df3&dn=LDD-20-ElCerebro.mp4&tr=ws%3A%2F%2Fstreamp2p.punto0.org%3A8000
 <br><br>
       </li>
       <li>
@@ -42,31 +45,41 @@ magnet:?xt=urn:btih:6a9759bffd5c0af65319979fb7832189f4f3c35d&dn=sintel.mp4&tr=ws
   </form>
 <hr>
    <form id="torrent_form"/> 
-       Pega una url de un torrent
+      <h3> Pega una url de un torrent</h3>
       <input name="torrentURL", placeholder="http:" value="">
       <button type='submit'>Escucha</button>
 <ul>
-<li>http://streamp2p.punto0.org/LDD-20-Elcerebro.torrent</li>
-<li>http://streamp2p.punto0.org/Sintel.torrent</li>
-<li>http://streamp2p.punto0.org/The_WIRED_CD-Rip_SampleMash.torrent</li>
 <li>http://streamp2p.punto0.org/radioela_100fuegos_23_carrero.torrent</li>
+<li>http://streamp2p.punto0.org/LDD-20-ElCerebro.torrent</li>
+<li>http://streamp2p.punto0.org/Sintel.torrent</li>
+<li>http://streamp2p.punto0.org/The_WIRED_CD-Rip_SampleMash.torrent (sin peers)</li>
 <li>http://streamp2p.punto0.org/tecnoparanoids51_archive.torrent (archive.org) </li>
-<p>
-      archive.org no deja descargar directamente :<br>
-      Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at http://archive.org/download/tecnoparanoids51/tecnoparanoids51_archive.torrent
+<p>archive.org no deja descargar directamente :<br>
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at http://archive.org/download/tecnoparanoids51/tecnoparanoids51_archive.torrent
 </p>
+</ul<
   </form>
 <hr>
-    Informacion de la semilla:
+    <h4>Informacion de la semilla</h4>
     <div class="seed"></div>
 <hr>
     <h3>Comparte un fichero:</h3>
-    <input type="file" id="files" name="files[]" />
+    <input type="file" id="seed_files" name="files[]" />
     <output id="list"></output>
+<hr>
+    <h3>Notas :</h3>
+<ul><li>No admite tamaños de ficheros superior a 200Mb (en decimal).</li>
+    <li>Sólo hace streaming mientras descarga de ficheros mp4. Limitación de los exploradores.</li>
+    <li>Hay formatos de mp4 que petan el repoductor DOM. Codec audio AAC va fino. No es necesario que haya video.</li>  
+    <li>El tiempo de conexion depende mucho de los trackers y del orden de la lista de trackers, va probando secuencialmente. En los de prueba usamos un único tracker en esta misma máquina. Un tracker fallido son entre 20 y 30 segundos de retardo en el inicio de la descarga.</li>
+    <li>Entre los trackers inclídos or defecto en webtorrent hay varios caídos, hay que sministrar nuestra propia lista de trackers.</li>
+    <li>Los torrents creados a partir del mismo archivo son equivalentes, auqne tengan otros trackers definidos o cambie el nombre del fichero o del torrent.</li>
+</ul>
 <hr>
     <h3>Debug Log :</h3>
     <div class="log"></div>
     <script src="bundle.js"></script>
+    </center>  
   </body>
 </html>
 

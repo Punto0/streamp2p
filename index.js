@@ -7,22 +7,53 @@
   webSeeds: Boolean        // Enable BEP19 web seeds (default=true)
 */
 
-var parseTorrent = require('parse-torrent')
-var WebTorrent = require('webtorrent')
+options = []
+options.announceList = [
+           [ 'ws://streamp2p.punto0.org:8000' ]
+//         [ 'http://streamp2p.punto0.org:8000/announce' ],
+//           [ 'http://streamp2p.punto0.org:6969/announce' ],
+//         [ 'ws://tracker.btorrent.xyz' ],
+//         [ 'wss://tracker.btorrent.xyzel25' ],
+//         [ 'wss://tracker.fastcast.nzel32'],
+//         [ 'wss://tracker.openwebtorrent.comee7'],
+//         [ 'udp://tracker.internetwarriors.net:1337' ],
+//         [ 'udp://tracker.leechers-paradise.org:6969' ],
+//         [ 'udp://tracker.coppersurfer.tk:6969' ]
+       ]
 
+var WebTorrent = require('webtorrent')
 var client = new WebTorrent()
+var parseTorrent = require('parse-torrent')
+// var fs = require('fs')
 
 var cont = 0
 var interval_connect
 
-document.getElementById('files').addEventListener('change', seed, false)
+document.getElementById('play_torrent_files').addEventListener('change', play_torrent_file, false)
+document.getElementById('seed_files').addEventListener('change', seed, false)
 document.getElementById('magnet_form').addEventListener('submit', play_magnet, false)
-document.getElementById('torrent_form').addEventListener('submit', play_torrent, false)
+document.getElementById('torrent_form').addEventListener('submit', play_torrent_url, false)
 
 client.on('error', function (err) {
   alert(err) 
   log(err)
 })
+
+client.on('warning', function (err) {
+  alert(err) 
+  log(err)
+})
+
+function print_play_info(torrent) {
+	document.querySelector('.play').innerHTML = '<strong>' + torrent.name + '</strong> -- Peers : '
+                    +( torrent.numPeers ) + '</br>Downloaded : '
+                    +( torrent.downloaded / 1024 ).toFixed(1) + ' kB -- Download Speed: '
+                    +( torrent.downloadSpeed / 1024 ).toFixed(1) + ' kB/s -- Progress : '
+                    +( torrent.progress * 100 ).toFixed(1) + '%</br> Uploaded : '
+                    +( torrent.uploaded / 1024 ).toFixed(1) + ' kB -- Upload Speed: '
+                    +( torrent.uploadSpeed / 1024 ).toFixed(1) + ' kB/s -- Time Remaining : '
+                    +( torrent.timeRemaining / 1000 ).toFixed(1) + ' secs.' 
+}
 
 function play_magnet(e) {
        console.log('play_magnet')
@@ -34,23 +65,10 @@ function play_magnet(e) {
 	}
         e.preventDefault() // Prevent page refresh
         var torrentId = document.querySelector('form input[name=torrentId]').value
-        console.log('Adding : ' + torrentId )
-/*
-  announce: [],              // Torrent trackers to use (added to list in .torrent or magnet uri)
-  getAnnounceOpts: Function, // Custom callback to allow sending extra parameters to the tracker
-  maxWebConns: Number,       // Max number of simultaneous connections per web seed [default=4]
-  path: String,              // Folder to download files to (default=`/tmp/webtorrent/`)
-  store: Function            // Custom chunk store (must follow [abstract-chunk-store](https://www.npmjs.com/package/abstract-chunk-store) API)
-*/
-       if ( client.add(torrentId, torrent_download) != 0 ) {
-	       interval_connect = setInterval(function () {
-        	  cont++
-	          document.querySelector('.play').innerHTML = 'Adding File. </br>Esperando peers ' + cont;
-       	       }, 1000)
-       }
+        torrent_add(torrentId); 
 }
 
-function play_torrent(e) {
+function play_torrent_url(e) {
 	if (WebTorrent.WEBRTC_SUPPORT) {
 		 // WebRTC is supported
 	} else {
@@ -59,77 +77,104 @@ function play_torrent(e) {
 	}
        e.preventDefault() // Prevent page refresh
        var link = document.querySelector('form input[name=torrentURL]').value
-       log("Adding torrent : " + link);
-                options = []
-                var ann_list = [
-                        [ 'ws://streamp2p.punto0.org:8000' ],
-//                      [ 'ws://tracker.btorrent.xyz' ],
-//                        [ 'wss://tracker.btorrent.xyzel25' ],
-//                        [ 'wss://tracker.fastcast.nzel32'],
-//                        [ 'wss://tracker.openwebtorrent.comee7'],
-                        [ 'http://streamp2p.punto0.org:6969/announce' ],
-//                      [ 'http://streamp2p.punto0.org:8000/announce' ],
-//                      [ 'udp://tracker.internetwarriors.net:1337' ],
-//                      [ 'udp://tracker.leechers-paradise.org:6969' ],
-//                      [ 'udp://tracker.coppersurfer.tk:6969' ]
-                ]
-                options.announceList = ann_list
-
-       client.add(link, options, torrent_download);
-       interval_connect = setInterval(function () {
-                    cont++;
-                    document.querySelector('.play').innerHTML = 'Adding File. </br>Esperando peers ' + cont;
-       }, 1000);
+       torrent_add(link);
 } // Fin funcion
 
+// botón seleccion de ficheros
+function play_torrent_file(evt) {
+        console.log('Play torrent file'); 
+        if (WebTorrent.WEBRTC_SUPPORT) {
+                 // WebRTC is supported
+        } else {
+            alert('Tu explorador no soporta WebRTC')
+            return
+        }
+        var files = evt.target.files; // FileList object
+        if ( files.length == 0 ) return
+        parseTorrent.remote(files[0], function (err, parsedTorrent) {
+            if (err) throw err
+            torrent_add(parsedTorrent);
+        }) 
+}
+
+/* Opciones de client.add : 
+  announce: [],              // Torrent trackers to use (added to list in .torrent or magnet uri)
+  getAnnounceOpts: Function, // Custom callback to allow sending extra parameters to the tracker
+  maxWebConns: Number,       // Max number of simultaneous connections per web seed [default=4]
+  path: String,              // Folder to download files to (default=`/tmp/webtorrent/`)
+  store: Function            // Custom chunk store (must follow [abstract-chunk-store](https://www.npmjs.com/package/abstract-chunk-store) API)
+*/
+function torrent_add(name) {
+    log('Adding ' + name);
+    client.add(name, options, torrent_download);
+    cont = 0;
+    interval_connect = setInterval(function () {
+        cont++;
+        document.querySelector('.play').innerHTML = 'Conectando al tracker... ' + cont;
+    }, 1000);
+}
+
 function torrent_download(torrent) {
-        clearInterval(interval_connect)
-        log('Got torrent metadata! Connected in ' + ( cont / 10) + ' secs')
-        log(
-          'Torrent info hash: ' + torrent.infoHash + ' ' +
-          '<a href="' + torrent.magnetURI + '" target="_blank">[Magnet URI]</a> ' +
-          '<a href="' + torrent.torrentFileBlobURL + '" target="_blank" download="' + torrent.name + '.torrent">[Download .torrent]</a>'
+        // Got torrent metadata!
+        clearInterval(interval_connect);
+        log('Got torrent Metadata in ' + cont + ' secs');
+        print_play_info(torrent);
+        log('Torrent info hash: ' + torrent.infoHash + ' ' +
+            '<a href="' + torrent.magnetURI + '" target="_blank">[Magnet URI]</a> ' +
+            '<a href="' + torrent.torrentFileBlobURL + '" target="_blank" download="' + torrent.name + '.torrent">[Download .torrent]</a>'
            )
-
-        // Print out progress
-        var interval = setInterval(function () {
-               document.querySelector('.play').innerHTML = '<strong>' + torrent.name + '</strong> -- Peers : '
-                    +( torrent.peersLength | '0' ) + '</br>Downloaded : '
-                    +( torrent.downloaded / 1024 ).toFixed(2) + ' kB -- Download Speed: '
-                    +( torrent.downloadSpeed / 1024 ).toFixed(2) + ' kB/s -- Progress : '
-                    +( torrent.progress * 100 ).toFixed(1) + '%</br> Uploaded : '
-                    +( torrent.uploaded / 1024 ).toFixed(2) + ' kB -- Upload Speed: '
-                    +( torrent.uploadSpeed / 1024 ).toFixed(2) + ' kB/s'
-         }, 500)
-
         // Render all files into to the page
+        log('Client is downloading:', torrent.infoHash)
         torrent.files.forEach(function (file) {
-          file.appendTo('.screen', function (err, elem) {
+            // Display the file by appending it to the DOM. Supports video, audio, images, and
+            // more. Specify a container element (CSS selector or reference to DOM node).
+            log('appending ' + file.name);
+            file.appendTo('.screen', function (err, elem) {
   		if (err) throw err // file failed to download or display in the DOM
-		console.log('New DOM node with the content', elem)
-		})
-      
-          file.getBlobURL(function (err, url) {
-            if (err) return log(err.message)
-            log('File done.');
-            var str = '<a href="' + url + '">Download full file: ' + file.name + '</a>';
-            var p = document.createElement('p');
-            p.innerHTML = str;
-            document.querySelector('.screen').appendChild(p);
-          })
+		log('New DOM node with the content' + elem)
+	    })
+        }) 
 
-         torrent.on('done', function () {
-          log(torrent.name + 'Progress: 100%')
-          clearInterval(interval)
+        torrent.on('done', function () {
+            torrent.files.forEach(function (file) {
+                file.getBlobURL(function (err, url) {
+                    if (err) return log(err.message)
+                    var str = '<a href="' + url + '">Download full file: ' + file.name + '</a>';
+                    var p = document.createElement('p');
+                    p.innerHTML = str;
+                    document.querySelector('.screen').appendChild(p);
+                })
+            })
+/*
+            var song = document.getElementsByTagName('audio')[0];
+            song.onended = function() {
+	            alert("The audio has ended");
+                    log("La cancion ha terminado, hay que introducir la siguiente...");
+            }
+*/
+            // Refresca stats de vez en cuando  
+            interval_connect = setInterval(function () {
+                print_play_info(torrent);
+            }, 10000);
         })
- 
-          var song = document.getElementsByTagName('audio')[0];
-	  song.onended = function() {
-	    alert("The audio has ended");
-            log("La cancion ha terminado, hay que introducir la siguiente...")
-          }
 
-	  })
+        torrent.on('noPeers', function (announceType) {
+            // alert(torrent.name + ' No peers found ' + announceType);
+            log(torrent.name + ' No peers found ' + announceType);
+        })
+        
+        torrent.on('download', function (bytes) {
+            print_play_info(torrent);
+        })
+
+	torrent.on('upload', function (bytes) {
+            print_play_info(torrent);
+	})
+
+	torrent.on('wire', function (wire) {
+            // log(torrent.name + ' New peer conneccted');
+            print_play_info(torrent);
+	})
 }
 
 // Seeding
@@ -163,21 +208,6 @@ function start_seeding (files) {
   urlList: [String]        // web seed urls (see [bep19](http://www.bittorrent.org/beps/bep_0019.html))
                            [{'Phone':'10%','Name':'10%'},{},{}]
 */ 
-	        options = [] 
-        	var ann_list = [
-             		[ 'ws://streamp2p.punto0.org:8000' ],
-//			[ 'ws://tracker.btorrent.xyz' ],
-//                        [ 'wss://tracker.btorrent.xyzel25' ],
-//                        [ 'wss://tracker.fastcast.nzel32'],
-//                        [ 'wss://tracker.openwebtorrent.comee7'],
-	            	[ 'http://streamp2p.punto0.org:6969/announce' ],
-//			[ 'http://streamp2p.punto0.org:8000/announce' ],
-//			[ 'udp://tracker.internetwarriors.net:1337' ],
-//			[ 'udp://tracker.leechers-paradise.org:6969' ],
-//			[ 'udp://tracker.coppersurfer.tk:6969' ]
-	        ]
-        	options.announceList = ann_list
-//	        options.announce = ann_list // Hace que salgan doblados los trackers
 		client.seed(files, options, torrent_seed);
 	} else {
         	alert('The File APIs are not fully supported in this browser.');
@@ -206,11 +236,11 @@ function torrent_seed (torrent) {
         var interval_seeding = setInterval(function () {
 	        output=[]
        		output.push('<li>Seeding :<strong>',torrent.name,'</strong></br> Peers : '
-                    ,(torrent.peersLength | '0'),' -- Uploaded : '
+                    ,(torrent.numPeers),' -- Uploaded : '
                     ,(torrent.uploaded / 1024).toFixed(2),' kB -- Upload Speed: '
                     ,(torrent.uploadSpeed / 1024).toFixed(2),' kB/s </li>');   
 	         document.querySelector('.seed').innerHTML = '<ul>' + output.join('') + '</ul>';
-        }, 1000)
+        }, 5000)
 }
 
 function log (str) {
