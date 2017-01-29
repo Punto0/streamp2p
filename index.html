@@ -18,7 +18,7 @@
     <output id="torrent_list"></output>
 <hr>
    <form id="magnet_form"/> 
-      <h3> Pega un enlace Magnet</h3>	
+      <h3>Pega un enlace Magnet</h3>	
       <input name="torrentId", placeholder="magnet:" value="">
       <button type="submit">Escucha</button>
 <br>
@@ -63,17 +63,18 @@ Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remot
     <h4>Informacion de la semilla</h4>
     <div class="seed"></div>
 <hr>
-    <h3>Comparte un fichero:</h3>
+    <h3>Crea un torrent y empieza a compartirlo</h3>
     <input type="file" id="seed_files" name="files[]" />
     <output id="list"></output>
 <hr>
     <h3>Notas :</h3>
 <ul><li>No admite tamaños de ficheros superior a 200Mb (en decimal).</li>
-    <li>Sólo hace streaming mientras descarga de ficheros mp4. Limitación de los exploradores.</li>
-    <li>Hay formatos de mp4 que petan el repoductor DOM. Codec audio AAC va fino. No es necesario que haya video.</li>  
-    <li>El tiempo de conexion depende mucho de los trackers y del orden de la lista de trackers, va probando secuencialmente. En los de prueba usamos un único tracker en esta misma máquina. Un tracker fallido son entre 20 y 30 segundos de retardo en el inicio de la descarga.</li>
-    <li>Entre los trackers inclídos or defecto en webtorrent hay varios caídos, hay que sministrar nuestra propia lista de trackers.</li>
-    <li>Los torrents creados a partir del mismo archivo son equivalentes, auqne tengan otros trackers definidos o cambie el nombre del fichero o del torrent.</li>
+    <li>Sólo reproduce sin terminar de descargar el archivo en formato mp4, no ogg ni mp3. Limitación de los exploradores.</li>
+    <li>Hay formatos de mp4 que petan el repoductor DOM. Codec audio AAC va fino en Firefox 45 en Debian Jessie. No es necesario que haya video.</li>  
+    <li>El tiempo de conexión depende mucho de los trackers y del orden de la lista de trackers, va probando secuencialmente. En los de prueba usamos un único tracker en esta misma máquina. Un tracker fallido son entre 20 y 30 segundos de retardo en el inicio de la descarga.</li>
+    <li>Entre los trackers incluídos por defecto en webtorrent hay varios caídos, hay que suministrar nuestra propia lista de trackers.</li>
+    <li>Los torrents creados a partir del mismo archivo son equivalentes, aunque tengan otros trackers definidos o cambie el nombre del fichero o del torrent. Tienen el mismo infoHash.</li>
+    <li><a href="http://streamp2p.punto0.org:8000/stats">Estadísticas del tracker</a></li>
 </ul>
 <hr>
     <h3>Debug Log :</h3>
