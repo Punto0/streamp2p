@@ -19,20 +19,20 @@ De momento estamos experimentando con ficheros de audio y Web torrent : https://
 
 ### Site
 
-Hay una página de prueba en :         http://streamp2p.punto0.org
-Tracker de prueba (webRTC ready) :    ws://streamp2p.punto0.org:8000
-Estadísticas del tracker de prueba :  http://streamp2p.punto0.org:8000/stats
-Opentracker :                         http://streamp2p.punto0.org:6969/announce
-Opentracker stats :                   http://streamp2p.punto0.org:6969/stats
+ * Hay una página de prueba en :         http://streamp2p.punto0.org
+ * Tracker de prueba (webRTC ready) :    ws://streamp2p.punto0.org:8000
+ * Estadísticas del tracker de prueba :  http://streamp2p.punto0.org:8000/stats
+ * Opentracker :                         http://streamp2p.punto0.org:6969/announce
+ * Opentracker stats :                   http://streamp2p.punto0.org:6969/stats
 
 ### Install
 
  0. $ sudo apt install nodejs npm
- 1. Instala dependencias : npm install webtorrent browserify
- 2. browserify index.js -o bundle.js
+ 1. $ npm install webtorrent browserify
+ 2. $ browserify index.js -o bundle.js
  3. Copia index.html y bundle.js al directorio público de un servidor html.
  4. Instala un tracker ( Opcional ):
-    1. npm install bittorrent-tracker
+    1. $ npm install bittorrent-tracker
     2. $ bittorrent-tracker
 
 ### Notas sobre las pruebas :
