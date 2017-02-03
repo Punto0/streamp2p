@@ -6,7 +6,7 @@ error_log(print_r($_FILES));
 $name = $_FILES['data']['name'];
 if ( move_uploaded_file($_FILES['data']['tmp_name'], "./torrents/{$name}" ) ) {  
     // Add to the feed
-    $rss_file = "./feedtest.xml";
+    $rss_file = "./feed.xml";
     $cont = 0;
     if (file_exists($rss_file)) {
         $file = fopen($rss_file,'r');
