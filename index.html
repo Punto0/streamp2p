@@ -7,11 +7,39 @@
 </head
 <body>
     <center> 
+    <p>Todo esto es altamente experimental, aunque no dañará nada...</p> 
+    </hr>
+    <h2>Publica</h2>    
+    <h4>Informacion de la semilla</h4>
+    <div class="seed"></div>
+<hr>
+    <h3>Crea un torrent y empieza a compartirlo</h3>
+    <input type="file" id="seed_files" name="files[]" />
+    <output id="list"></output>
+    </center>
+    <ul><li>El torrent creado se subirá a <a href="http://streamp2p.punto0.org/torrents">aquí</a></li>
+        <li>El archivo original no saldrá de tu ordenador, se quedará compartiendo en esta pestaña del navegador.</li>
+        <li>Si cierras la pestaña, se terminará el proceso y se dejará de compartir, asegúrate de descargarlo antes en otro lado.</li> 
+        <li>Hay un feed de los torrents subidos <a href="http://streamp2p.punto0.org/feed.xml">aquí</a></li>
+        <li>Usa el siguiente formato de nombre de fichero (acepta espacios, carácter delimitador "-") :
+                                     <ul><li>RADIO_NOBREPROGRAMA_NUMEROPROGRAMA_TITULOPROGAMA.mp4</li>
+                                     <li>NOMBREBANDA_NOMBREALBUM_NUMEROPISTA_NOMBREPISTA.mp4</li></ul></li>
+        <li>Puedes subir cualquier tipo de archivo, pero para que se reproduzca en streaming mientras que está descargando tiene que estar en <b>mp4</b>.<br>Si está en otro formato, el archivo se descargará primero entero antes de reproducirse.</li>
+        <li>No admite tamaños de ficheros superior a 200Mb (en decimal).</li>
+    </ul>
+<hr>
+<hr>
+    <center><h2>Descarga y/o reproducción</h2>      
     <h4>Screen</h4> 
     <div class="screen"></div> 
 <hr>  
    <h4>File info</h4>
    <div class="play"></div>
+<hr>
+    <h3>Sonerezh WebTorrent</h3>
+    <p>Para reproducir directamente o explorar los torrents en web, puedes probar <a href="http://media.punto0.org">este Sonerezh modificado para webTorrent.</a></p>
+    <p>Sonerezh importa los torrents del directorio donde el script de publicación escribe. 
+    <p>User : guest@punto0.org Password : Invitado</p>
 <hr>
     <h3>Sube un archivo torrent de tu ordenador</h3>
     <input type="file" id="play_torrent_files" name="files[]" />
@@ -22,66 +50,61 @@
       <input name="torrentId", placeholder="magnet:" value="">
       <button type="submit">Escucha</button>
 <br>
+   </form></center>
      <ul>
       <li>
       ELA - 100Fuegos - 23 - Carrero - mp4 - 1:18:03
-<br><br>
+<br>
 magnet:?xt=urn:btih:7b40c74c9ad973260a1dd9ff2e1d87c922bd629a&dn=radioela_100fuegos_23_carrero.mp4&tr=ws%3A%2F%2Fstreamp2p.punto0.org%3A8000
-<br><br>
-     </li>
-      <li>
-      Irola - La linterna de Diogenes - 20 - El Cerebro - mp4 - 1:22:54 
-<br><br>
+<br></li>
+      <li>Irola - La linterna de Diogenes - 20 - El Cerebro - mp4 - 1:22:54 
+<br>
 magnet:?xt=urn:btih:13bc77cabfce742f6fc240ec42aea1f70b006df3&dn=LDD-20-ElCerebro.mp4&tr=ws%3A%2F%2Fstreamp2p.punto0.org%3A8000
-<br><br>
-      </li>
-      <li>
-      Sintel - Corto animacion Blender Foundation - mp4 - 129 MB- 14:48 
-<br><br>
+<br></li>
+      <li>Sintel - Corto animacion Blender Foundation - mp4 - 129 MB- 14:48 
+<br>
 magnet:?xt=urn:btih:6a9759bffd5c0af65319979fb7832189f4f3c35d&dn=sintel.mp4&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&ws=https%3A%2F%2Fwebtorrent.io%2Ftorrents%2Fsintel-1024-surround.mp4
-<br><br>
-      </li>
-      </ul>  
-  </form>
+</li>
+     </ul>  
 <hr>
+  <center>
    <form id="torrent_form"/> 
       <h3> Pega una url de un torrent</h3>
       <input name="torrentURL", placeholder="http:" value="">
       <button type='submit'>Escucha</button>
 <ul>
-<li>http://streamp2p.punto0.org/radioela_100fuegos_23_carrero.torrent</li>
-<li>http://streamp2p.punto0.org/LDD-20-ElCerebro.torrent</li>
-<li>http://streamp2p.punto0.org/Sintel.torrent</li>
-<li>http://streamp2p.punto0.org/The_WIRED_CD-Rip_SampleMash.torrent (sin peers)</li>
-<li>http://streamp2p.punto0.org/tecnoparanoids51_archive.torrent (archive.org) </li>
-<p>archive.org no deja descargar directamente :<br>
+<li>Puedes copiar las urls de los torrents en <a href="http://streamp2p.punto0.org/torrents">este directorio</a></li>
+<li>O directamenente desde <a href="http://streamp2p.punto0.org/feed.rss">este feed</a></li>
+<li>archive.org no deja descargar directamente :<br>
 Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at http://archive.org/download/tecnoparanoids51/tecnoparanoids51_archive.torrent
-</p>
+</li>
 </ul<
   </form>
-<hr>
-    <h4>Informacion de la semilla</h4>
-    <div class="seed"></div>
-<hr>
-    <h3>Crea un torrent y empieza a compartirlo</h3>
-    <input type="file" id="seed_files" name="files[]" />
-    <output id="list"></output>
+</center>  
 <hr>
     <h3>Notas :</h3>
-<ul><li>No admite tamaños de ficheros superior a 200Mb (en decimal).</li>
-    <li>Sólo reproduce sin terminar de descargar el archivo en formato mp4, no ogg ni mp3. Limitación de los exploradores.</li>
-    <li>Hay formatos de mp4 que petan el repoductor DOM. Codec audio AAC va fino en Firefox 45 en Debian Jessie. No es necesario que haya video.</li>  
+<ul>
     <li>El tiempo de conexión depende mucho de los trackers y del orden de la lista de trackers, va probando secuencialmente. En los de prueba usamos un único tracker en esta misma máquina. Un tracker fallido son entre 20 y 30 segundos de retardo en el inicio de la descarga.</li>
-    <li>Entre los trackers incluídos por defecto en webtorrent hay varios caídos, hay que suministrar nuestra propia lista de trackers.</li>
+    <li>Entre los trackers incluídos por defecto en webtorrent hay varios caídos, hay que suministrar nuestra propia lista de trackers. </li>
     <li>Los torrents creados a partir del mismo archivo son equivalentes, aunque tengan otros trackers definidos o cambie el nombre del fichero o del torrent. Tienen el mismo infoHash.</li>
     <li><a href="http://streamp2p.punto0.org:8000/stats">Estadísticas del tracker</a></li>
     <li><a href="http://github.com/Punto0/streamp2p">Código</a></li>
+    <li><h4>ToDo Recursividad Torrent</h4>
+    <ul><li>Una play list en webTorrent no es más que una lista de torrents.</li>
+        <li>Se puede crear un torrent que contenga otros archivos torrents cuando se descargue.</li>
+        <li>Por lo que se podría hacer recurrencia, por ejemplo para una discografía de un grupo o programa de radio sin duplicar datos</li>
+        <li>Torrent discografía incluye varios torrents de album, torrent de album incluye varios torrents de pistas, torrent de pista es reproducible</li>
+        <li>Torrent RadiosLibresFederation incluye Torrents de Radio, Torrent de Radio incluye torrents de Programas, torrents de Programas incluye torrents de Capítulos, Torrent de Capítulo es reproducible.</li>
+        <li>Los Torrents padres son mutables (hay que modificarlos cuando cambien los hijos), pero los reproducibles (hijos) son inmutables.</li>
+        <li>La acción de cambiar en un padre es una señal de actualización, se puede usar como bandera.</li>
+        <li>Los torrents padres pueden incluir ficheros con metainfo.</li>
+        <li>Los torrents padres pueden llevar un código de versión en el nombre del fichero para controlar el historial de publicación.</li>
+    </ul>
 </ul>
 <hr>
     <h3>Debug Log :</h3>
     <div class="log"></div>
     <script src="bundle.js"></script>
-    </center>  
   </body>
 </html>
 

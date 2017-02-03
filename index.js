@@ -178,7 +178,6 @@ function torrent_download(torrent) {
 }
 
 // Seeding
-
 // botón seleccion de ficheros 
 function seed(evt) {
 	console.log('Seed request');
@@ -226,11 +225,11 @@ function torrent_seed (torrent) {
           'Torrent info hash: ' + torrent.infoHash + ' ' +
           '<a href="' + torrent.magnetURI + '" target="_blank">[Magnet URI]</a> ' +
           '<a href="' + torrent.torrentFileBlobURL + '" target="_blank" download="' + torrent.name + '.torrent">[Download .torrent]</a>'
-        )
+        );
 
         torrent.on('done', function () {
           log('Seeding. Progress: 100%')
-        })
+        });
         // Esto hay que cambiar para multificheros. 
        	var output = [];
         var interval_seeding = setInterval(function () {
@@ -240,8 +239,51 @@ function torrent_seed (torrent) {
                     ,(torrent.uploaded / 1024).toFixed(2),' kB -- Upload Speed: '
                     ,(torrent.uploadSpeed / 1024).toFixed(2),' kB/s </li>');   
 	         document.querySelector('.seed').innerHTML = '<ul>' + output.join('') + '</ul>';
-        }, 5000)
-}
+        }, 1000);
+        upload_torrent(torrent);
+};
+
+// Save torrent 
+function upload_torrent(torrent) {
+    var name = torrent.files[0].name + '.torrent';
+    // Get the blob. torrent.torrentFiles no genera un archivo valido
+    var blobUrl = torrent.torrentFileBlobURL;
+    var xhr = new XMLHttpRequest;
+    xhr.responseType = 'blob';
+    xhr.onload = function() {
+        var blob = xhr.response;
+        // var file = new File(blob, name, { type: "application/x-bittorrent" } );
+        log("Uploading torrent for file " + name + " -- " + blob.name + " -- " + blob.type + " -- " + blob.size + " bytes");
+        var fd = new FormData();
+        fd.append("data", blob, name); 
+        // Set up the request.
+        var xhr2 = new XMLHttpRequest();
+        // Open the connection.
+        xhr2.open('POST', 'http://streamp2p.punto0.org/upload.php', true);
+        xhr2.onerror = function(e) {
+            alert("Error " + e.target.status + " occurred while posting the torrent.");
+        };
+        xhr2.onreadystatechange = function() {//Call a function when the state changes.
+             console.log("Response : " + xhr2.responseText); //check if the data was received successfully.
+        }; 
+        xhr2.send(fd);
+    };
+    xhr.open('GET', blobUrl);
+    xhr.send();
+};
+
+/*
+    // Set up a handler for when the request finishes.
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            // File(s) uploaded.
+            log('file uploaded');
+        } else {
+            log('An error occurred uploading the file! Error ' + xhr.status);
+        }
+    }
+    };
+*/
 
 function log (str) {
         var p = document.createElement('p');
